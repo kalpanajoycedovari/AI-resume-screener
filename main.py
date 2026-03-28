@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from app.routers import resume, jobs
 
 app = FastAPI(
@@ -10,6 +12,8 @@ app = FastAPI(
 app.include_router(jobs.router)
 app.include_router(resume.router)
 
-@app.get("/", tags=["Health"])
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
+@app.get("/", tags=["UI"])
 def root():
-    return {"status": "running", "message": "AI Resume Screener API is live"}
+    return FileResponse("frontend/index.html")

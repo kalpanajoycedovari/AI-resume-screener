@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Resume Screener</title>
+  <link rel="stylesheet" href="/static/style.css"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="nav-brand">
+      <span class="logo-icon">&#9670;</span>
+      <span>ResumeAI</span>
+    </div>
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#create-job">Create Job</a>
+      <a href="#screen">Screen</a>
+      <a href="#rankings">Rankings</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="home" class="hero">
+    <div class="hero-content">
+      <div class="badge">Powered by Claude AI</div>
+      <h1>Screen Resumes<br/><span class="accent">Intelligently</span></h1>
+      <p>Upload resumes, define your job requirements, and let AI rank your candidates automatically. Save hours of manual screening.</p>
+      <div class="hero-buttons">
+        <a href="#create-job" class="btn-primary">Get Started</a>
+        <a href="#screen" class="btn-secondary">Upload Resume</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><strong>AI Powered</strong><span>Claude by Anthropic</span></div>
+        <div class="stat"><strong>PDF Support</strong><span>Any resume format</span></div>
+        <div class="stat"><strong>Instant</strong><span>Results in seconds</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="card-float card-1">
+        <div class="card-score">92%</div>
+        <div class="card-name">Sarah Johnson</div>
+        <div class="card-role">Senior Developer</div>
+      </div>
+      <div class="card-float card-2">
+        <div class="card-score">78%</div>
+        <div class="card-name">Mike Chen</div>
+        <div class="card-role">Backend Engineer</div>
+      </div>
+      <div class="card-float card-3">
+        <div class="card-score">85%</div>
+        <div class="card-name">Priya Patel</div>
+        <div class="card-role">Full Stack Dev</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Create a Job</h3>
+        <p>Define the role, required skills and experience level</p>
+      </div>
+      <div class="step-arrow">&#8594;</div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Upload Resumes</h3>
+        <p>Upload one or multiple PDF resumes at once</p>
+      </div>
+      <div class="step-arrow">&#8594;</div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Get Rankings</h3>
+        <p>AI scores and ranks every candidate automatically</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CREATE JOB -->
+  <section id="create-job" class="section">
+    <div class="section-header">
+      <h2>Create a Job</h2>
+      <p>Define what you are looking for in a candidate</p>
+    </div>
+    <div class="form-card">
+      <div class="form-group">
+        <label>Job Title</label>
+        <input type="text" id="job-title" placeholder="e.g. Senior Python Developer"/>
+      </div>
+      <div class="form-group">
+        <label>Job Description</label>
+        <textarea id="job-desc" rows="4" placeholder="Describe the role, responsibilities and requirements..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Required Skills <span class="hint">(comma separated)</span></label>
+          <input type="text" id="req-skills" placeholder="Python, FastAPI, SQL"/>
+        </div>
+        <div class="form-group">
+          <label>Nice to Have <span class="hint">(comma separated)</span></label>
+          <input type="text" id="nice-skills" placeholder="Docker, AWS, Redis"/>
+        </div>
+      </div>
+      <div class="form-group small">
+        <label>Years of Experience Required</label>
+        <input type="number" id="exp-years" placeholder="2" min="0" max="20"/>
+      </div>
+      <button class="btn-primary" onclick="createJob()">Create Job</button>
+      <div id="job-result" class="result-box hidden"></div>
+    </div>
+  </section>
+
+  <!-- SCREEN RESUMES -->
+  <section id="screen" class="section alt-bg">
+    <div class="section-header">
+      <h2>Screen Resumes</h2>
+      <p>Upload resumes and screen them against a job</p>
+    </div>
+    <div class="form-card">
+      <div class="form-group">
+        <label>Select Job</label>
+        <div class="select-row">
+          <select id="screen-job-select">
+            <option value="">-- Select a job --</option>
+          </select>
+          <button class="btn-outline" onclick="loadJobs()">Refresh Jobs</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Upload Resumes <span class="hint">(PDF only, max 20)</span></label>
+        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('resume-files').click()">
+          <div class="upload-icon">&#8679;</div>
+          <div class="upload-text">Click to upload or drag and drop</div>
+          <div class="upload-hint">PDF files only</div>
+          <input type="file" id="resume-files" multiple accept=".pdf" style="display:none" onchange="handleFiles(this)"/>
+        </div>
+        <div id="file-list" class="file-list"></div>
+      </div>
+      <div class="screen-buttons">
+        <button class="btn-primary" onclick="rankResumes()">Rank All Candidates</button>
+        <button class="btn-outline" onclick="screenSingle()">Screen Single Resume</button>
+      </div>
+      <div id="screen-loading" class="loading hidden">
+        <div class="spinner"></div>
+        <span>AI is analysing resumes...</span>
+      </div>
+      <div id="screen-result" class="result-box hidden"></div>
+    </div>
+  </section>
+
+  <!-- RANKINGS -->
+  <section id="rankings" class="section">
+    <div class="section-header">
+      <h2>Candidate Rankings</h2>
+      <p>Your ranked candidates will appear here</p>
+    </div>
+    <div id="rankings-container">
+      <div class="empty-state">
+        <div class="empty-icon">&#9776;</div>
+        <p>No rankings yet. Screen some resumes to see results here.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <span class="logo-icon">&#9670;</span> ResumeAI
+      </div>
+      <p>Built with FastAPI and Claude AI</p>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
